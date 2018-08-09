@@ -118,11 +118,12 @@ def content_loss(y_hat, y):
 
 对于样式，我们可以简单将它看成是像素点在每个通道的统计分布。例如要匹配两张图片的样式，我们可以匹配这两张图片在RGB这三个通道上的直方图。更一般的，假设卷积层的输出格式是$c \times h \times w$，既（通道，高，宽）。那么我们可以把它变形成 $c \times hw$ 的二维数组，并将它看成是一个维度为$c$ 的随机变量采样到的 $hw$ 个点。所谓的样式匹配就是使得两个 $c$ 维随机变量统计分布一致。
 
-匹配统计分布常用的做法是冲量匹配，就是说使得他们有一样的均值，协方差，和其他高维的冲量。为了计算简单起见，我们只匹配二阶信息，即协方差。下面定义如何计算协方差矩阵，
+匹配统计分布常用的做法是冲量匹配，就是说使得他们有一样的均值，协方差，和其他高维的冲量。为了计算简单起见，我们只匹配二阶信息，即协方差。下面定义如何计算协方差矩阵(也称为[格拉姆矩阵](https://en.wikipedia.org/wiki/Gramian_matrix)),输出为 $c \times c$ 的矩阵：
 
 ```{.python .input  n=11}
 def gram(x):
-    c, n = x.shape[1], x.size // x.shape[1]
+    #c, n = x.shape[1], x.size // x.shape[1]
+    c, n = x.shape[1], x.shape[2] * x.shape[3]    #x.shape = (batch,channels,h,w)
     y = x.reshape((c, n))
     return nd.dot(y, y.T) / n
 ```
